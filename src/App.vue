@@ -19,3 +19,9 @@ export default {
   }),
 };
 </script>
+
+<style lang="scss" scoped>
+ .v-application{
+    background: rgba(87, 189, 20, 0.11) !important;
+ }
+</style>
