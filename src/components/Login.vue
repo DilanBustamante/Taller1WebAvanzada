@@ -8,12 +8,15 @@
     ></v-text-field>
     <v-text-field 
         label="Password"
-        v-model="password"
         :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" 
         :type="show1 ? 'text' : 'password'" 
         @click:append="show1 = !show1" show1 es un attr
         class="password-field"></v-text-field>
-    <div class='register'> <h5>¿Aún no tienes una cuenta?</h5><a>Regístrate</a> </div>
+    <div class='register'> 
+      <h5>¿Aún no tienes una cuenta?</h5>
+      <router-link :to="{name:'Register'}">Regístrate</router-link>
+      <router-view/>
+    </div>
     <v-btn color="success">Iniciar Sesión</v-btn>
   </div> 
 </template>
