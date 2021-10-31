@@ -1,6 +1,5 @@
 <template>
     <div>
-        Welcome to foro, please login or register.
         <Login />
     </div> 
 </template>
