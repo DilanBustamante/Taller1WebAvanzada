@@ -2,11 +2,11 @@
   <v-col class="container">
     <div class="fullName">
         <h3>Bienvenido,</h3>
-        <h1>{{username}}</h1>
+        <h1>{{currrentUser.username}}</h1>
         <v-btn color='error' class='mt-5'>Salir</v-btn>
     </div>
     
-    <div v-for='comment in comments' :key="comment.email" class="container-comment">
+    <div v-for='comment in comments' :key="comment.date" class="container-comment">
      <div class='commentary'>
         <h5>{{comment.comment}}</h5>
        <div class='author'>
@@ -19,7 +19,7 @@
         color="accent" 
         class='mt-2 answer-btn elevation-0'
         v-if="comment.answer.text==''"
-        @click="comment.isAnswer=true">
+        @click="setShowFieldState(comment.email, comment.date)">
         Responder
         </v-btn>
       <div class='answer-comment' v-if='comment.answer.text!=""'>
@@ -29,13 +29,14 @@
          <h6 class='light-text author-date'>{{comment.answer.date}}</h6>
        </div>
       </div>
-      <div v-if='comment.isAnswer' >
+      <div v-if='comment.showFieldAnswer==true' >
           <v-text-field 
             label ="Agrega tu comentario" 
             filled 
             class="comment mt-3"
+            v-model="newAnswer"
             />
-        <v-btn small class="send-btn">enviar</v-btn>
+        <v-btn small class="send-btn" @click="addNewAnswer(comment.email, comment.date)">enviar</v-btn>
       </div>
     </div>
     <div class='newForo'>
@@ -43,11 +44,13 @@
             label ="Agrega un nuevo comentario al foro" 
             filled 
             class="newCommentary mt-5"
+            v-model="newComment"
         />
         <v-btn 
         class='newCommentary-btn'
         color="success"
         small
+        @click="addNewMessage"
         >comentar</v-btn>
     </div>
   </v-col>
@@ -56,42 +59,83 @@
 <script>
 export default {
     name: 'Chat',
-    data: () => ({
+    data() 
+    { return {
+      newComment: '',
+      newAnswer: '',
       username: 'Dilan Bustamante',
+      currrentUser: {
+        username: 'Dilan Bustamante',
+        email: 'dilan@gmail.com' ,
+      },
       answer: false,
-      comments: [
-        {username: 'Daniela Otero',
-        email: 'jessot@hotmail.com',
-        comment: 'Esta es una prueba de comentario',
-        isAnswer: false,
-        answer: {
-            text: '',
-            author: '',
-            date: '',
-        },
-        date: '31/10/2021'},
-        {username: 'Alison Cayumbo',
-        email: 'alisson@hotmail.com',
-        comment: 'Vayase pal infierno',
-        isAnswer: false,
-         answer: {
-            text: 'feaaa',
-            author: 'Dilan Bustamante',
-            date: '30/10-2021',
-        },
-        date: '30/10/2021'},
-        {username: 'Valentina Muñoz',
-        email: 'valenmuñoz@hotmail.com',
-        comment: 'Me gustan los gatos',
-        isAnswer: false,
-         answer: {
-            text: '',
-            author: '',
-            date: '',
-        },
-        date: '29/10/2021'},
-      ],
-    }),
+      comments: [],
+    }
+  },
+  methods: {
+    clearNewComment(){
+      this.newComment = ''
+    },
+    clearNewAnswer(){
+      this.newAnswer = ''
+    },
+    addNewMessage(){
+      var hoy = new Date();
+      var fecha = hoy.getDate() + '-' + ( hoy.getMonth() + 1 ) + '-' + hoy.getFullYear();
+      var hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds()
+      const newComment= {
+      username: this.currrentUser.username,
+      email: this.currrentUser.email,
+      comment: this.newComment,
+      showFieldAnswer: false,
+      answer: {
+        text: '',
+        author: '',
+        date: '',
+      },
+      date: fecha + ' ' + hora }
+
+      this.comments.push(newComment)
+      this.clearNewComment()
+    },
+    addNewAnswer(email, date){
+      var hoy = new Date();
+      var fecha = hoy.getDate() + '-' + ( hoy.getMonth() + 1 ) + '-' + hoy.getFullYear();
+      var hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds()
+      const answer = {
+          text: this.newAnswer,
+          author: this.currrentUser.username,
+          date:  fecha + ' ' + hora,
+      }
+      for(let i = 0; i < this.comments.length; i++){
+        if(this.comments[i].email == email && this.comments[i].date == date ){
+          this.comments[i].answer = answer
+           this.comments[i].showFieldAnswer= false
+        }
+      }
+      this.clearNewAnswer()
+    },
+    setShowFieldState(email, date){
+      const comment = this.searchComment(email, date)
+      comment.showFieldAnswer=!comment.showFieldAnswer
+      this.clearNewAnswer()
+      this.updateComment(email, date, comment)
+},
+    updateComment(email, date, newCommentState){
+       for(let i = 0; i < this.comments.length; i++){
+        if(this.comments[i].email == email && this.comments[i].date == date ){
+          this.comments[i] = newCommentState
+        }
+      }
+    },
+    searchComment(email, date){
+      for(let i = 0; i < this.comments.length; i++){
+        if(this.comments[i].email == email && this.comments[i].date == date ){
+          return this.comments[i]
+        }
+      }
+    },
+  },
 }
 </script>
 
