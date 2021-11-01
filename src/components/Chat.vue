@@ -1,12 +1,9 @@
 <template>
 
         <v-col class="container"> 
-           
             <div class="container-comment">
                  <v-text-field  label ="Agrega tu comentario" filled class="comment"/>
-                 <a> Responder</a>
             </div>
-             
 
         </v-col>
 
