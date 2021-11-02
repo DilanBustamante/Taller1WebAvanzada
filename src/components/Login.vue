@@ -17,7 +17,7 @@
       <router-link :to="{name:'Register'}">Regístrate</router-link>
       <router-view/>
     </div>
-    <v-btn color="success">Iniciar Sesión</v-btn>
+    <v-btn color="success" to="/Foro">Iniciar Sesión</v-btn>
   </div> 
 </template>
 
