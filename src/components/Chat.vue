@@ -12,6 +12,8 @@
        <div class='author'>
          <h6 class='author-name light-text '>{{comment.username}}</h6>
          <h6 class='light-text author-date'>{{comment.date}}</h6>
+         <v-btn color='error'>mdi-delete</v-btn>
+         <v-btn>mdi-pencil</v-btn>
        </div>
       </div>
       <v-btn 
@@ -27,7 +29,10 @@
         <div class='author'>
          <h6 class='author-name light-text '>{{comment.answer.author}}</h6>
          <h6 class='light-text author-date'>{{comment.answer.date}}</h6>
-       </div>
+         <v-btn color='error'>mdi-delete</v-btn>
+         <v-btn>mdi-pencil</v-btn>
+        </div>
+
       </div>
       <div v-if='comment.showFieldAnswer==true' >
           <v-text-field 

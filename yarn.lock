@@ -1323,6 +1323,11 @@
     "cssnano-preset-default" "^4.0.0"
     "postcss" "^7.0.0"
 
+"@mdi/font@^6.4.95":
+  "integrity" "sha512-jCQdXCD339EXirWYFbZv1Ansthm9j6O3FSQLsfi/mKamnGYxqbUBm5D4UjcVr6HVYIPNwTQQ46HNHlswPD8RcQ=="
+  "resolved" "https://registry.npmjs.org/@mdi/font/-/font-6.4.95.tgz"
+  "version" "6.4.95"
+
 "@mrmlnc/readdir-enhanced@^2.2.1":
   "integrity" "sha512-bPHp6Ji8b41szTOcaP63VlnbbO5Ny6dwAATtY6JTjh5N2OLrb5Qk/Th5cRkRQhkWCt+EJsYrNB0MiL+Gpn6e3g=="
   "resolved" "https://registry.npmjs.org/@mrmlnc/readdir-enhanced/-/readdir-enhanced-2.2.1.tgz"
@@ -5966,6 +5971,11 @@
     "inherits" "^2.0.1"
     "safe-buffer" "^5.1.2"
 
+"mdi@^2.2.43":
+  "integrity" "sha512-g3m6z4303qieltUM20JL2gdsJZvoVzIzO74qa2XxZ2kg9JPwrPEAgooVhRDHZi1vvRh0gB8Dg+c9XqNdz4jcIg=="
+  "resolved" "https://registry.npmjs.org/mdi/-/mdi-2.2.43.tgz"
+  "version" "2.2.43"
+
 "mdn-data@2.0.14":
   "integrity" "sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow=="
   "resolved" "https://registry.npmjs.org/mdn-data/-/mdn-data-2.0.14.tgz"
@@ -9030,6 +9040,11 @@
     "loader-utils" "^1.1.0"
     "vue-hot-reload-api" "^2.3.0"
     "vue-style-loader" "^4.1.0"
+
+"vue-material-design-icons@^4.13.0":
+  "integrity" "sha512-TwaWrvh4J49VdkV9Uzcbr/p3FBRiBthRkIrg6SUh7ogFUljdA2ySNoAYD9dTU+mJkANIn1A6MoD/PnyLONnkWg=="
+  "resolved" "https://registry.npmjs.org/vue-material-design-icons/-/vue-material-design-icons-4.13.0.tgz"
+  "version" "4.13.0"
 
 "vue-router@^3.5.3":
   "integrity" "sha512-FUlILrW3DGitS2h+Xaw8aRNvGTwtuaxrRkNSHWTizOfLUie7wuYwezeZ50iflRn8YPV5kxmU2LQuu3nM/b3Zsg=="
