@@ -5,8 +5,8 @@
         <h1>{{currrentUser.username}}</h1>
         <v-btn color='error' class='mt-5'>Salir</v-btn>
     </div>
-    
-    <div v-for='comment in comments' :key="comment.date" class="container-comment">
+    <v-btn color='success' @click="updateComments">refresh comments</v-btn>
+    <div v-for='comment in comments' :key="comment.id" class="container-comment">
      <div class='commentary'>
         <h5>{{comment.comment}}</h5>
        <div class='author'>
@@ -20,15 +20,15 @@
         small 
         color="accent" 
         class='mt-2 answer-btn elevation-0'
-        v-if="comment.answer.text==''"
+        v-if="comment.answer.text == ''"
         @click="setShowFieldState(comment.email, comment.date)">
         Responder
         </v-btn>
       <div class='answer-comment' v-if='comment.answer.text!=""'>
-        <h4>{{comment.answer.text}}</h4>
+        <h4>{{comment.answer[1]}}</h4>
         <div class='author'>
-         <h6 class='author-name light-text '>{{comment.answer.author}}</h6>
-         <h6 class='light-text author-date'>{{comment.answer.date}}</h6>
+         <h6 class='author-name light-text '>{{comment.answer[0]}}</h6>
+         <h6 class='light-text author-date'>{{comment.answer[2]}}</h6>
          <v-btn color='error'>mdi-delete</v-btn>
          <v-btn>mdi-pencil</v-btn>
         </div>
@@ -41,7 +41,7 @@
             class="comment mt-3"
             v-model="newAnswer"
             />
-        <v-btn small class="send-btn" @click="addNewAnswer(comment.email, comment.date)">enviar</v-btn>
+        <v-btn small class="send-btn" @click="addNewAnswer(comment.id)">enviar</v-btn>
       </div>
     </div>
     <div class='newForo'>
@@ -62,6 +62,10 @@
 </template>
 
 <script>
+import firebase from '../config/firebase';
+import { getFirestore, collection, getDocs } from 'firebase/firestore';
+import { setDoc, doc } from '@firebase/firestore';
+
 export default {
     name: 'Chat',
     data() 
@@ -75,9 +79,16 @@ export default {
       },
       answer: false,
       comments: [],
+      db: getFirestore(firebase),
     }
   },
   methods: {
+    updateComments(){
+       this.getComments(this.db).then(res => {
+         this.comments = res
+         console.log(this.comments)
+       })
+    },
     clearNewComment(){
       this.newComment = ''
     },
@@ -88,22 +99,35 @@ export default {
       var hoy = new Date();
       var fecha = hoy.getDate() + '-' + ( hoy.getMonth() + 1 ) + '-' + hoy.getFullYear();
       var hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds()
-      const newComment= {
-      username: this.currrentUser.username,
-      email: this.currrentUser.email,
-      comment: this.newComment,
-      showFieldAnswer: false,
-      answer: {
-        text: '',
-        author: '',
-        date: '',
-      },
-      date: fecha + ' ' + hora }
+      
+      var idd= Math.floor(Math.random()*10000)
 
-      this.comments.push(newComment)
+      setDoc(doc(this.db, 'comments', idd+'' ), {
+        id: Math.floor(Math.random()*10000),
+        username: this.currrentUser.username,
+        email: this.currrentUser.email,
+        comment: this.newComment,
+        showFieldAnswer: false,
+        answer: {
+          text: '',
+          author: '',
+          date:  '',
+          },
+        date: fecha + ' ' + hora
+      })
+
       this.clearNewComment()
+      this.updateComments()
+
+      
     },
-    addNewAnswer(email, date){
+    async getComments(db){
+      const commentsCol = collection(db, 'comments')
+      const commentSnapshot = await getDocs(commentsCol)
+      const commentList = commentSnapshot.docs.map(comment => comment.data() )
+      return commentList
+    },
+    addNewAnswer(id){
       var hoy = new Date();
       var fecha = hoy.getDate() + '-' + ( hoy.getMonth() + 1 ) + '-' + hoy.getFullYear();
       var hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds()
@@ -112,13 +136,13 @@ export default {
           author: this.currrentUser.username,
           date:  fecha + ' ' + hora,
       }
-      for(let i = 0; i < this.comments.length; i++){
-        if(this.comments[i].email == email && this.comments[i].date == date ){
-          this.comments[i].answer = answer
-           this.comments[i].showFieldAnswer= false
-        }
-      }
+
+      setDoc(doc(this.db, 'comments', id+'' ), {
+        answer: answer
+      })
+
       this.clearNewAnswer()
+      this.updateComments()
     },
     setShowFieldState(email, date){
       const comment = this.searchComment(email, date)
