@@ -1,5 +1,5 @@
 {
-  "homepage":"https://dilanbustamante.github.io/Taller1WebAvanzada/",
+  "homepage": "https://dilanbustamante.github.io/Taller1WebAvanzada/",
   "name": "tallers12_web_avanzada",
   "version": "0.1.0",
   "private": true,
@@ -7,7 +7,7 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
-    "predeploy":"npm rum build",
+    "predeploy": "npm rum build",
     "deploy": "gh-pages -d build"
   },
   "dependencies": {
@@ -17,7 +17,8 @@
     "vue": "^2.6.11",
     "vue-material-design-icons": "^4.13.0",
     "vue-router": "^3.5.3",
-    "vuetify": "^2.4.0"
+    "vuetify": "^2.4.0",
+    "vuex": "^3.6.2"
   },
   "devDependencies": {
     "@mdi/font": "^6.4.95",
@@ -54,6 +55,4 @@
     "last 2 versions",
     "not dead"
   ]
-
-
 }

@@ -1,49 +1,62 @@
 <template>
-  <v-col class="container">
+  <v-col class="container ">
     <div class="fullName">
         <h3>Bienvenido,</h3>
-        <h1>{{currrentUser.username}}</h1>
+        <div v-if="getUser(currentUser)!=null">
+          <h1>{{currentUser.name}}</h1>
+        </div>
         <v-btn color='error' class='mt-5'>Salir</v-btn>
     </div>
-    <v-btn color='success' @click="updateComments">refresh comments</v-btn>
-    <div v-for='comment in comments' :key="comment.id" class="container-comment">
-     <div class='commentary'>
-        <h5>{{comment.comment}}</h5>
-       <div class='author'>
-         <h6 class='author-name light-text '>{{comment.username}}</h6>
-         <h6 class='light-text author-date'>{{comment.date}}</h6>
-         <v-btn color='error'>mdi-delete</v-btn>
-         <v-btn>mdi-pencil</v-btn>
-       </div>
-      </div>
-      <v-btn 
-        small 
-        color="accent" 
-        class='mt-2 answer-btn elevation-0'
-        v-if="comment.answer.text == ''"
-        @click="setShowFieldState(comment.email, comment.date)">
-        Responder
-        </v-btn>
-      <div class='answer-comment' v-if='comment.answer.text!=""'>
-        <h4>{{comment.answer[1]}}</h4>
+    <v-card class='chat-container '  >
+      <div v-for='comment in comments' :key="comment.id" class="container-comment ">
+      <div class='commentary'>
+          <h4>{{comment.comment}}</h4>
         <div class='author'>
-         <h6 class='author-name light-text '>{{comment.answer[0]}}</h6>
-         <h6 class='light-text author-date'>{{comment.answer[2]}}</h6>
-         <v-btn color='error'>mdi-delete</v-btn>
-         <v-btn>mdi-pencil</v-btn>
+            <h6 class='author-name light-text '>{{comment.username}}</h6>
+            <h6 class='light-text author-date'>{{comment.date}}</h6>
+            <v-btn class='delete-btn elevation-2' icon small>
+            <v-icon color="error">mdi-delete</v-icon>
+            </v-btn>
+            <v-btn class='edit-btn elevation-2' icon small>
+            <v-icon color="black">mdi-pencil</v-icon>
+            </v-btn>
         </div>
+        </div>
+        <v-btn 
+          small 
+          color="accent" 
+          class='mt-2 answer-btn elevation-0'
+          v-if="comment.answer.text == '' "
+          @click="setShowFieldState(comment.email, comment.date)">
+          Responder
+          </v-btn>
+        <div class='answer-comment' v-if='comment.answer.text!=""'>
+          <h4>{{comment.answer.text}}</h4>
+          <div class='author'>
+            <h6 class='author-name light-text '>{{comment.answer.author}}</h6>
+            <h6 class='light-text author-date'>{{comment.answer.date}}</h6>
+            <v-btn class='delete-btn elevation-2' icon small>
+              <v-icon color="error">mdi-delete</v-icon>
+            </v-btn>
+            <v-btn class='edit-btn elevation-2' small icon >
+              <v-icon color="black">mdi-pencil</v-icon>
+            </v-btn>
+          
+          </div>
 
+        </div>
+        <div v-if='comment.showFieldAnswer==true' >
+            <v-text-field 
+              label ="Agrega tu comentario" 
+              filled 
+              class="comment mt-3"
+              v-model="newAnswer"
+              />
+          <v-btn small class="send-btn" @click="addNewAnswer(comment.id)">enviar</v-btn>
+        </div>
       </div>
-      <div v-if='comment.showFieldAnswer==true' >
-          <v-text-field 
-            label ="Agrega tu comentario" 
-            filled 
-            class="comment mt-3"
-            v-model="newAnswer"
-            />
-        <v-btn small class="send-btn" @click="addNewAnswer(comment.id)">enviar</v-btn>
-      </div>
-    </div>
+    </v-card>
+    
     <div class='newForo'>
         <v-text-field 
             label ="Agrega un nuevo comentario al foro" 
@@ -63,8 +76,8 @@
 
 <script>
 import firebase from '../config/firebase';
-import { getFirestore, collection, getDocs } from 'firebase/firestore';
-import { setDoc, doc } from '@firebase/firestore';
+import { getFirestore, collection, getDocs, setDoc, doc, updateDoc } from 'firebase/firestore';
+import { mapState } from 'vuex'
 
 export default {
     name: 'Chat',
@@ -72,22 +85,23 @@ export default {
     { return {
       newComment: '',
       newAnswer: '',
-      username: 'Dilan Bustamante',
-      currrentUser: {
-        username: 'Dilan Bustamante',
-        email: 'dilan@gmail.com' ,
-      },
       answer: false,
       comments: [],
+      userCurrent: null,
       db: getFirestore(firebase),
     }
   },
+  mounted(){
+     this.updateComments()
+  },
+  computed:{ 
+    ...mapState(['currentUser'])
+  },
   methods: {
     updateComments(){
-       this.getComments(this.db).then(res => {
-         this.comments = res
-         console.log(this.comments)
-       })
+      this.getComments(this.db).then(res => {
+       this.comments = res
+      })
     },
     clearNewComment(){
       this.newComment = ''
@@ -103,9 +117,9 @@ export default {
       var idd= Math.floor(Math.random()*10000)
 
       setDoc(doc(this.db, 'comments', idd+'' ), {
-        id: Math.floor(Math.random()*10000),
-        username: this.currrentUser.username,
-        email: this.currrentUser.email,
+        id: idd,
+        username: this.userCurrent.name + ' ' + this.userCurrent.lastname,
+        email: this.userCurrent.email,
         comment: this.newComment,
         showFieldAnswer: false,
         answer: {
@@ -118,8 +132,6 @@ export default {
 
       this.clearNewComment()
       this.updateComments()
-
-      
     },
     async getComments(db){
       const commentsCol = collection(db, 'comments')
@@ -133,13 +145,13 @@ export default {
       var hora = hoy.getHours() + ':' + hoy.getMinutes() + ':' + hoy.getSeconds()
       const answer = {
           text: this.newAnswer,
-          author: this.currrentUser.username,
+          author: this.userCurrent.name + ' ' + this.userCurrent.lastname ,
           date:  fecha + ' ' + hora,
       }
-
-      setDoc(doc(this.db, 'comments', id+'' ), {
-        answer: answer
-      })
+      const commentDocRef = doc(this.db, "comments", id+'');
+      updateDoc(commentDocRef, {
+        "answer": answer
+      });
 
       this.clearNewAnswer()
       this.updateComments()
@@ -164,6 +176,10 @@ export default {
         }
       }
     },
+    getUser(data) {
+      this.userCurrent = data
+      return this.userCurrent
+    }
   },
 }
 </script>
@@ -181,11 +197,27 @@ export default {
   width: 70%;
   margin: 0 auto 30px auto;
 }
+.chat-container{
+  padding-top: 50px;
+  max-height: 700px;
+  overflow-y: scroll;
+  background:linear-gradient(to top, rgb(191, 191, 226), white) !important;
+}
 a{
   margin-right: 800px;
 }
+.delete-btn, .edit-btn{
+  width: 50px;
+  font-size: 5px;
+}
+.edit-btn{
+  margin-left: 10px;
+}
+.delete-btn{
+  margin-left: auto;
+}
 .fullName{
-  background-color: rgb(65, 65, 65);
+  background-color: rgb(134, 134, 134);
   color:white;
   padding: 14px;
   width: max-content;
